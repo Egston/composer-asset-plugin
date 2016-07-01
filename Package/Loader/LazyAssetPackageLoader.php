@@ -20,6 +20,7 @@ use Composer\Repository\Vcs\VcsDriverInterface;
 use Fxp\Composer\AssetPlugin\AssetEvents;
 use Fxp\Composer\AssetPlugin\Event\VcsRepositoryEvent;
 use Fxp\Composer\AssetPlugin\Package\LazyPackageInterface;
+use Fxp\Composer\AssetPlugin\Repository\Util;
 use Fxp\Composer\AssetPlugin\Type\AssetTypeInterface;
 
 /**
@@ -255,6 +256,13 @@ class LazyAssetPackageLoader implements LazyLoaderInterface
         $vcsRepos = array();
         $data = array_merge($data, $this->packageData);
         $data = $this->assetType->getPackageConverter()->convert($data, $vcsRepos);
+
+        // make this package to replace the aliased package
+        list($realName, $realVersion) = Util::parseAliasName($data['name']);
+        if ($realVersion !== null) {
+            $data['replace'] = isset($data['replace']) ? $data['replace'] : array();
+            $data['replace'][$realName] = $realVersion;
+        }
 
         $this->dispatchAddVcsEvent($vcsRepos);
 

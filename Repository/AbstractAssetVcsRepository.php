@@ -234,6 +234,12 @@ abstract class AbstractAssetVcsRepository extends VcsRepository
         $data['name'] = $this->packageName ?: $data['name'];
         $data = $this->assetType->getPackageConverter()->convert($data, $vcsRepos);
 
+        // make the repository to provide the aliased package
+        list($realName, $realVersion) = Util::parseAliasName($data['name']);
+        if ($realVersion !== null) {
+            $data['provide'] = array($realName => $realVersion);
+        }
+
         return (array) $data;
     }
 

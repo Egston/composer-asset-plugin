@@ -95,6 +95,22 @@ class Util
     }
 
     /**
+     * Split alias of asset package name to the real asset package name and version.
+     *
+     * @param string $name
+     *
+     * @return array An array('name' => '...', 'version' => '...'|null)
+     */
+    public static function parseAliasName($name)
+    {
+        if (preg_match('/([\w0-9\/_-]+)-(\d+(.\d+)?.[\dxX]+)$/', $name, $matches)) {
+            return array($matches[1], $matches[2]);
+        }
+
+        return array($name, null);
+    }
+
+    /**
      * Write the vcs repository name in output console.
      *
      * @param IOInterface $io   The IO instance
